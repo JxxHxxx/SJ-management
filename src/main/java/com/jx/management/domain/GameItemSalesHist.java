@@ -1,9 +1,7 @@
 package com.jx.management.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 
 import java.time.LocalDateTime;
@@ -11,6 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(exclude = {"gameItemSalesHistNo"})
 public class GameItemSalesHist {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,4 +41,17 @@ public class GameItemSalesHist {
     @Comment("삭제 여부")
     private boolean deleted;
 
+
+    @Builder
+    public GameItemSalesHist(String gameName, String gameServerName, String txTitle,
+                             LocalDateTime txEnrollDateTime, Integer txAmount, String userId) {
+        this.gameName = gameName;
+        this.gameServerName = gameServerName;
+        this.txTitle = txTitle;
+        this.txEnrollDateTime = txEnrollDateTime;
+        this.txAmount = txAmount;
+        this.userId = userId;
+        this.createDateTime = LocalDateTime.now();
+        this.deleted = false;
+    }
 }
