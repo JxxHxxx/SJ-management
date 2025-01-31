@@ -9,13 +9,13 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(exclude = {"gameItemSalesHistNo"})
-public class GameItemSalesHist {
+@ToString(exclude = {"saleRecordNo"})
+public class SaleRecord {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "GAME_ITEM_SALES_HIST_NO")
+    @Column(name = "SALE_RECORD_NO")
     @Comment("게임 아이템 판매 내역 PK")
-    private Long gameItemSalesHistNo;
+    private Long saleRecordNo;
     @Column(name = "GAME_NAME")
     @Comment("게임 명")
     private String gameName;
@@ -43,8 +43,8 @@ public class GameItemSalesHist {
 
 
     @Builder
-    public GameItemSalesHist(String gameName, String gameServerName, String txTitle,
-                             LocalDateTime txEnrollDateTime, Integer txAmount, String userId) {
+    public SaleRecord(String gameName, String gameServerName, String txTitle,
+                      LocalDateTime txEnrollDateTime, Integer txAmount, String userId) {
         this.gameName = gameName;
         this.gameServerName = gameServerName;
         this.txTitle = txTitle;
@@ -53,5 +53,14 @@ public class GameItemSalesHist {
         this.userId = userId;
         this.createDateTime = LocalDateTime.now();
         this.deleted = false;
+    }
+    /**
+     * 동일한 거래임을 확인하기 위한 메서드 equal() 와 다른 용도이니 주의 바람
+     **/
+    public boolean applicationEqual(SaleRecord saleRecord) {
+        return this.gameName.equals(saleRecord.getGameName()) && this.gameServerName.equals(saleRecord.getGameServerName()) &&
+                this.txEnrollDateTime.equals(saleRecord.getTxEnrollDateTime())&& this.txAmount.equals(saleRecord.getTxAmount()) &&
+                this.userId.equals(saleRecord.getUserId());
+
     }
 }
