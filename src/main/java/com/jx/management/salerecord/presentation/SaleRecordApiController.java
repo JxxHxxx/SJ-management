@@ -1,6 +1,6 @@
-package com.jx.management.presentation;
+package com.jx.management.salerecord.presentation;
 
-import com.jx.management.application.SaleRecordService;
+import com.jx.management.salerecord.application.SaleRecordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;

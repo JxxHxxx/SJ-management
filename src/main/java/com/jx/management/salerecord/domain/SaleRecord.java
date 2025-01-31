@@ -1,10 +1,11 @@
-package com.jx.management.domain;
+package com.jx.management.salerecord.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Entity
@@ -54,6 +55,21 @@ public class SaleRecord {
         this.createDateTime = LocalDateTime.now();
         this.deleted = false;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        SaleRecord that = (SaleRecord) o;
+        return Objects.equals(gameName, that.gameName) && Objects.equals(gameServerName, that.gameServerName) &&
+                Objects.equals(txTitle, that.txTitle) && Objects.equals(txEnrollDateTime, that.txEnrollDateTime) &&
+                Objects.equals(txAmount, that.txAmount) && Objects.equals(userId, that.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(gameName, gameServerName, txTitle, txEnrollDateTime, txAmount, userId);
+    }
+
     /**
      * 동일한 거래임을 확인하기 위한 메서드 equal() 와 다른 용도이니 주의 바람
      **/
