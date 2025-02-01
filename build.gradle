@@ -31,6 +31,13 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
     implementation 'org.apache.poi:poi-ooxml:5.2.5'
 
+    // https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-jasper
+    implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+    // https://mvnrepository.com/artifact/javax.servlet/jstl
+    implementation 'javax.servlet:jstl:1.2'
+
+
+
 }
 
 tasks.named('test') {
