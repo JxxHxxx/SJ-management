@@ -20,6 +20,9 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.jx.management.common.endpoint.ResponseCode.F_SR01;
+import static com.jx.management.common.endpoint.ResponseCode.F_SR02;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -42,7 +45,7 @@ public class SaleRecordService {
 
     // 엑셀 등록
     @Transactional
-    public void record(MultipartFile file) throws IOException {
+    public String record(MultipartFile file) throws IOException {
         // 시트 가져오기 시작 - 구 엑셀 버전 호환 로직
         Workbook sheets;
         if (file.getOriginalFilename().endsWith(".xls")) {
@@ -58,7 +61,7 @@ public class SaleRecordService {
         // 검증 로직
         boolean validMetaRow = validateMetaRow(metaRow);
         if (!validMetaRow) {
-            throw new SaleRecordServiceException("manipulated meta row, transaction rollback");
+            throw new SaleRecordServiceException(F_SR01);
         }
         else {
             log.info("valid meta row process ongoing");
@@ -109,7 +112,10 @@ public class SaleRecordService {
         // 제약 조건 위배 - 게임 명, 서버 명, 거래 등록일, 사용자 ID 멀티 인덱스 중복 X 조건 위배 확률
         catch (DataIntegrityViolationException exception) {
             log.error("some sale record already persist, tx rollback" , exception);
+            throw new SaleRecordServiceException(F_SR02);
         }
+
+        return "sale record upload success";
     }
 
     // 엑셀 파일 내 첫 행이 형식에 맞게 배열되어 있는지 검증

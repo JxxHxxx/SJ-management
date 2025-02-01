@@ -39,6 +39,11 @@
             border: none;
             cursor: pointer;
         }
+        .warn-msg {
+            padding: 10px;
+            color: red;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -52,6 +57,7 @@
         <span id="file-name">파일 첨부</span>
     </div>
     <input type="file" id="fileInput">
+    <span class="warn-msg" style="display: none;">첨부된 파일이 없습니다. 파일을 첨부해주세요</span>
 </div>
 
 <script>
@@ -59,9 +65,13 @@
     const uploadBtn = document.getElementById('upload-btn');
     const fileInput = document.getElementById('fileInput');
     const fileNameDisplay = document.getElementById('file-name');
+    const warnMsg = document.querySelector('.warn-msg');
 
     fileInput.addEventListener('change', function (event) {
         let files = event.target.files;
+        if (files.length > 0) {
+            warnMsg.style.display = 'none';
+        }
         displayFileNames(files);
     });
 
@@ -84,9 +94,10 @@
     });
 
     uploadBtn.addEventListener('click', function () {
-        let files = document.getElementById('fileInput').files;
+        let files = fileInput.files;
+
         if (files.length === 0) {
-            alert('첨부된 파일이 없습니다');
+            warnMsg.style.display = 'inline'; // 경고 메시지 보이기
             return;
         }
 
@@ -99,9 +110,19 @@
             method: 'POST',
             body: formData
         })
-            .then(response => response.text())
-            .then(data => alert('업로드 완료: ' + data))
+            .then(response => response.json()) // JSON 파싱
+            .then(data => {
+                if (data.responseCode === "S_0001") {
+                    alert('✅ upload success: ' + data.body);
+                }
+                else {
+                    alert("❌ upload fail" +
+                        "\nerror code : ' + data.responseCode" +
+                        "\nmessage : " + data.body);
+                }
+            })
             .catch(error => console.error('업로드 오류:', error));
+
     });
 
     function displayFileNames(files) {
