@@ -47,7 +47,7 @@
                    type="text"
                    id="year"
                    name="year"
-                   placeholder="조회할 연도를 입력하세요"
+                   placeholder="조회할 연도 e.g) 2024"
                    value="${param.year}">
         </form>
     </div>
@@ -57,7 +57,7 @@
     <thead>
     <tr>
         <th>게임 이름</th>
-        <th>거래 횟수</th>
+        <th>거래 건수</th>
         <th>총 판매 금액</th>
     </tr>
     </thead>

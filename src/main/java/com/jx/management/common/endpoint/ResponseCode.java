@@ -9,8 +9,11 @@ public enum ResponseCode {
 
     // sale record domain fail code start
     F_SR01("manipulated meta row, transaction rollback"),
-    F_SR02("some sale record already persist, throw error");
+    F_SR02("some sale record already persist, throw error"),
     // sale record domain fail code end
+
+    F_SR11("invalid params");
+
 
     private final String description;
 

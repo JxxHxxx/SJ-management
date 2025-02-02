@@ -25,13 +25,18 @@
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="content">
-        <jsp:include page="showStatistics.jsp" />
+    <div class="container">
+        <div class="content">
+            <jsp:include page="monthlyStat.jsp"/>
+        </div>
+        <div class="content">
+            <jsp:include page="record.jsp"/>
+        </div>
     </div>
-    <div class="content">
-        <jsp:include page="record.jsp" />
+    <div class="container">
+        <div class="content">
+            <jsp:include page="annualStat.jsp"/>
+        </div>
     </div>
-</div>
 </body>
 </html>

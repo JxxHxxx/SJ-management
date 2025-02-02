@@ -5,30 +5,38 @@ import com.jx.management.salerecord.domain.SaleRecord;
 import com.jx.management.salerecord.domain.SaleRecordRepository;
 import com.jx.management.salerecord.domain.SaleRecordServiceException;
 import com.jx.management.salerecord.transfer.AnnualSaleRecordStatTransfer;
+import com.jx.management.salerecord.transfer.MonthlySaleRecordStatTransfer;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.jx.management.common.endpoint.ResponseCode.F_SR01;
-import static com.jx.management.common.endpoint.ResponseCode.F_SR02;
+import static com.jx.management.common.endpoint.ResponseCode.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SaleRecordService {
+
+    @Value("${search.default.year}")
+    private int searchDefaultYear;
 
     private static final int SALE_RECORD_SHEET_IDX = 0;
     private static final int GAME_NAME_IDX = 0;
@@ -134,6 +142,26 @@ public class SaleRecordService {
     }
 
     public List<AnnualSaleRecordStatTransfer> getAnnualSaleRecordStatistics(Integer year) {
+        if (year == 0) {
+            year = searchDefaultYear;
+        }
         return saleRecordRepository.getAnnualSaleRecordStatistics(year);
+    }
+
+    /**
+     * @Params mys : 조회 기간
+     *  e.g) 2025-02-02 기준 mys=3 -> 2024-12, 2025-01, 2025-02 판매 통계 데이터 조회
+     **/
+    public List<MonthlySaleRecordStatTransfer> getMonthlySaleRecordStatistics(int mys) {
+        if (mys <= 0) {
+            log.error("mys must be greater than 0");
+            throw new SaleRecordServiceException(F_SR11);
+        }
+        String yearMonth = LocalDate.now()
+                .minusMonths(mys)
+                .withDayOfMonth(1)
+                .toString();
+
+        return saleRecordRepository.getMonthlySaleRecordStatistics(yearMonth);
     }
 }
