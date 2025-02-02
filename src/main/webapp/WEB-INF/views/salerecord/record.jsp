@@ -49,6 +49,7 @@
 <body>
 
 <div class="top-container">
+    <h2>판매 내역 자료 업로드</h2>
     <div class="btn-gr">
         <div></div>
         <button id="upload-btn">등록</button>
@@ -106,7 +107,7 @@
             formData.append('file', file);
         }
 
-        fetch('/api/record', {
+        fetch('/api/sale-records', {
             method: 'POST',
             body: formData
         })

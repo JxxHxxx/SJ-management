@@ -4,6 +4,7 @@ import com.jx.management.common.application.JxSheetUtils;
 import com.jx.management.salerecord.domain.SaleRecord;
 import com.jx.management.salerecord.domain.SaleRecordRepository;
 import com.jx.management.salerecord.domain.SaleRecordServiceException;
+import com.jx.management.salerecord.transfer.AnnualSaleRecordStatTransfer;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.jx.management.common.endpoint.ResponseCode.F_SR01;
@@ -129,5 +131,9 @@ public class SaleRecordService {
         return StringUtils.pathEquals(category, "카테고리") && StringUtils.pathEquals(classification, "분류") &&
                 StringUtils.pathEquals(title, "제목") && StringUtils.pathEquals(amount, "거래금액") &&
                 StringUtils.pathEquals(enrollDateTime, "등록일");
+    }
+
+    public List<AnnualSaleRecordStatTransfer> getAnnualSaleRecordStatistics(Integer year) {
+        return saleRecordRepository.getAnnualSaleRecordStatistics(year);
     }
 }
