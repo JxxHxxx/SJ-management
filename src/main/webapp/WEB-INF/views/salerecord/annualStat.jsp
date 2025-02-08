@@ -42,7 +42,7 @@
 <div class="btn-gr">
     <div></div>
     <div>
-        <form action="/saleRecord/main.do" method="get">
+        <form action="/manage/saleRecord/main.do" method="get">
             <input class="searchInput"
                    type="text"
                    id="year"

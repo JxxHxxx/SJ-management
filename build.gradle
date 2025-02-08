@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.7'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'war'
 }
 
 group = 'com.jx'
@@ -36,7 +37,7 @@ dependencies {
     implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:2.0.0' // 최신 JSTL
     implementation 'jakarta.servlet:jakarta.servlet-api:4.0.4' // 서블릿 API 추가
 
-
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 }
 
 tasks.named('test') {
