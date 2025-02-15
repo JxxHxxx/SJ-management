@@ -63,8 +63,8 @@
     <tbody>
     <c:forEach var="item" items="${monthlySaleRecordStat}">
         <tr>
-            <td>${item.yearMonth}</td>
-            <td><fmt:formatNumber value="${item.amountSum}" pattern="#,###"/>원</td>
+            <td>${item.key}</td>
+            <td><fmt:formatNumber value="${item.value}" pattern="#,###"/>원</td>
         </tr>
     </c:forEach>
     </tbody>

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.SortedMap;
 
 @Slf4j
 @Controller
@@ -61,7 +62,7 @@ public class SaleRecordViewController {
     }
 
     private void requestGetMonthlySaleRecordStatistics(Model model, Integer mys) {
-        List<MonthlySaleRecordStatTransfer> result = apiController.getMonthlySaleRecordStatistics(mys).getBody().getBody();
+        SortedMap<String, Integer> result = apiController.getMonthlySaleRecordStatistics(mys).getBody().getBody();
         model.addAttribute("monthlySaleRecordStat", result);
         model.addAttribute("mys", mys);
     }

@@ -11,7 +11,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -20,11 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.jx.management.common.endpoint.ResponseCode.*;
 
@@ -162,17 +158,32 @@ public class SaleRecordService {
     /**
      * @Params mys : 조회 기간
      *  e.g) 2025-02-02 기준 mys=3 -> 2024-12, 2025-01, 2025-02 판매 통계 데이터 조회
+     *
+     *  TODO 2025-02-15 만약 매출이 없는 달의 경우 DB상에 조회되지 않기에 수기 반영
      **/
-    public List<MonthlySaleRecordStatTransfer> getMonthlySaleRecordStatistics(int mys) {
+    public SortedMap<String, Integer> getMonthlySaleRecordStatistics(int mys) {
         if (mys <= 0) {
             log.error("mys must be greater than 0");
             throw new SaleRecordServiceException(F_SR11);
         }
-        String yearMonth = LocalDate.now()
-                .minusMonths(mys)
-                .withDayOfMonth(1)
-                .toString();
 
-        return saleRecordRepository.getMonthlySaleRecordStatistics(yearMonth);
+        SortedMap<String, Integer> results = new TreeMap(Collections.reverseOrder());
+        for (int my = 0; my < mys; my++) {
+            results.put(LocalDate.now()
+                    .minusMonths(my)
+                    .withDayOfMonth(1)
+                    .format(DateTimeFormatter.ofPattern("yyyy-MM")), 0);
+        }
+
+        List<MonthlySaleRecordStatTransfer> monthlySaleRecordStatTransfers = saleRecordRepository.getMonthlySaleRecordStatistics(LocalDate.now()
+                .minusMonths(mys - 1)
+                .withDayOfMonth(1)
+                .toString());
+
+        for (MonthlySaleRecordStatTransfer msr : monthlySaleRecordStatTransfers) {
+            results.put(msr.getYearMonth(), msr.getAmountSum());
+        }
+
+        return results;
     }
 }

@@ -4,7 +4,6 @@ import com.jx.management.common.endpoint.EndPointDto;
 import com.jx.management.common.endpoint.ResponseCode;
 import com.jx.management.salerecord.application.SaleRecordService;
 import com.jx.management.salerecord.transfer.AnnualSaleRecordStatTransfer;
-import com.jx.management.salerecord.transfer.MonthlySaleRecordStatTransfer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.SortedMap;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -35,10 +35,10 @@ public class SaleRecordApiController {
     }
 
     @GetMapping("/api/sale-records/monthly")
-    public ResponseEntity<EndPointDto<List<MonthlySaleRecordStatTransfer>>> getMonthlySaleRecordStatistics(
+    public ResponseEntity<EndPointDto<SortedMap<String, Integer>>> getMonthlySaleRecordStatistics(
             @RequestParam(value = "mys",  defaultValue = "6") Integer mys) {
         log.info("request getMonthlySaleRecordStatistics()");
-        List<MonthlySaleRecordStatTransfer> result = saleRecordService.getMonthlySaleRecordStatistics(mys);
+        SortedMap<String, Integer> result = saleRecordService.getMonthlySaleRecordStatistics(mys);
         return ResponseEntity.ok(new EndPointDto<>(ResponseCode.S_0001.name(), result));
     }
 
