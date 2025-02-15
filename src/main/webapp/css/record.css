@@ -26,7 +26,14 @@
     border: none;
     cursor: pointer;
 }
-.warn-msg {
+
+#upload-btn:hover {
+    background: #003978;
+}
+
+.noUploadFileMsg,
+.unSupportedFormatMsg,
+.unValidatedFileMsg {
     padding: 10px;
     color: red;
     font-size: 13px;

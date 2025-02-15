@@ -1,12 +1,14 @@
 package com.jx.management.salerecord.application;
 
 import com.jx.management.common.application.JxSheetUtils;
+import com.jx.management.common.endpoint.ResponseCode;
 import com.jx.management.salerecord.domain.*;
 import com.jx.management.salerecord.transfer.AnnualSaleRecordStatTransfer;
 import com.jx.management.salerecord.transfer.MonthlySaleRecordStatTransfer;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,13 +52,17 @@ public class SaleRecordService {
 
     // 엑셀 등록
     @Transactional(noRollbackFor = NoRollbackSaleRecordServiceException.class)
-    public String record(MultipartFile file) throws IOException {
+    public Integer record(MultipartFile file) {
         // 시트 가져오기 시작 - 구 엑셀 버전 호환 로직
         Workbook sheets;
-        if (file.getOriginalFilename().endsWith(".xls")) {
-            sheets = new HSSFWorkbook(file.getInputStream());
-        } else {
-            sheets = WorkbookFactory.create(file.getInputStream());
+        try {
+            if (file.getOriginalFilename().endsWith(".xls")) {
+                sheets = new HSSFWorkbook(file.getInputStream());
+            } else {
+                sheets = WorkbookFactory.create(file.getInputStream());
+            }
+        } catch (IOException e) {
+            throw new SaleRecordServiceException(F_SR03, e);
         }
         // 시트 가져오기 종료
         Sheet sheet = sheets.getSheetAt(SALE_RECORD_SHEET_IDX);
@@ -130,18 +136,27 @@ public class SaleRecordService {
 
         }
         pendingSaleRecords.isEmpty();
-        return pendingSaleRecords.isEmpty() ?
-                "success, but 0 saleRecord uploaded because already persistence" :
-                "success," + persistenceSaleRecords.size() + " saleRecord";
+        return pendingSaleRecords.isEmpty() ? 0 : persistenceSaleRecords.size() ;
     }
 
     // 엑셀 파일 내 첫 행이 형식에 맞게 배열되어 있는지 검증
     private boolean validateMetaRow(Row row) {
-        String category = row.getCell(0).getStringCellValue();
-        String classification = row.getCell(1).getStringCellValue();
-        String title = row.getCell(2).getStringCellValue();
-        String amount = row.getCell(3).getStringCellValue();
-        String enrollDateTime = row.getCell(4).getStringCellValue();
+        String category = null;
+        String classification = null;
+        String title = null;
+        String amount = null;
+        String enrollDateTime = null;
+        try {
+            category = row.getCell(0).getStringCellValue();
+            classification = row.getCell(1).getStringCellValue();
+            title = row.getCell(2).getStringCellValue();
+            amount = row.getCell(3).getStringCellValue();
+            enrollDateTime = row.getCell(4).getStringCellValue();
+        } catch (NullPointerException e) {
+            throw new SaleRecordServiceException(ResponseCode.F_SR01, e);
+        } catch (Exception e) {
+            throw new SaleRecordServiceException(ResponseCode.F_SR99, e);
+        }
 
         return StringUtils.pathEquals(category, "카테고리") && StringUtils.pathEquals(classification, "분류") &&
                 StringUtils.pathEquals(title, "제목") && StringUtils.pathEquals(amount, "거래금액") &&

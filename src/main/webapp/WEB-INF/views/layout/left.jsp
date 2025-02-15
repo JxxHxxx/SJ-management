@@ -5,6 +5,7 @@
     <ul>
         <li id="saleStatListItem">판매 통계</li>
         <li id="enrollSaleRecordListItem">판매 내역 업로드</li>
+        <li id="gameAccountManageListItem">게임 계정 관리</li>
     </ul>
 </div>
 

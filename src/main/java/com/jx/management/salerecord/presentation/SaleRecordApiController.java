@@ -43,9 +43,9 @@ public class SaleRecordApiController {
     }
 
     @PostMapping("/api/sale-records")
-    public ResponseEntity<EndPointDto<String>> record(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<EndPointDto<Integer>> record(@RequestParam("file") MultipartFile file) throws IOException {
         log.info("request record()");
-        String result = saleRecordService.record(file);
-        return ResponseEntity.status(CREATED.value()).body(new EndPointDto<>(ResponseCode.S_0001.name(), result));
+        Integer saleRecordCount = saleRecordService.record(file);
+        return ResponseEntity.status(CREATED.value()).body(new EndPointDto<>(ResponseCode.S_0001.name(), saleRecordCount));
     }
 }

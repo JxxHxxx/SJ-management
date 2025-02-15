@@ -12,4 +12,9 @@ public class SaleRecordServiceException extends RuntimeException{
         super(responseCode.getDescription());
         this.responseCode = responseCode;
     }
+
+    public SaleRecordServiceException(ResponseCode responseCode, Throwable cause) {
+        super(responseCode.getDescription(), cause);
+        this.responseCode = responseCode;
+    }
 }
