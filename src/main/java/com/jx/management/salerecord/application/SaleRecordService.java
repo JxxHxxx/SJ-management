@@ -1,9 +1,7 @@
 package com.jx.management.salerecord.application;
 
 import com.jx.management.common.application.JxSheetUtils;
-import com.jx.management.salerecord.domain.SaleRecord;
-import com.jx.management.salerecord.domain.SaleRecordRepository;
-import com.jx.management.salerecord.domain.SaleRecordServiceException;
+import com.jx.management.salerecord.domain.*;
 import com.jx.management.salerecord.transfer.AnnualSaleRecordStatTransfer;
 import com.jx.management.salerecord.transfer.MonthlySaleRecordStatTransfer;
 import lombok.RequiredArgsConstructor;
@@ -52,9 +50,10 @@ public class SaleRecordService {
     private static final String CATEGORY_DELIMITER = ">";
 
     private final SaleRecordRepository saleRecordRepository;
+    private final GameAccountRepository gameAccountRepository;
 
     // 엑셀 등록
-    @Transactional
+    @Transactional(noRollbackFor = NoRollbackSaleRecordServiceException.class)
     public String record(MultipartFile file) throws IOException {
         // 시트 가져오기 시작 - 구 엑셀 버전 호환 로직
         Workbook sheets;
@@ -115,17 +114,29 @@ public class SaleRecordService {
                 log.info("[duplicated sale record] {} not added", saleRecord.toString());
             }
         }
+        // 이미 저장되어 있는 SaleRecord 제외
+        List<SaleRecord> persistenceSaleRecords = saleRecordRepository.findByUserId("admin");
+        for (SaleRecord persistenceSaleRecord : persistenceSaleRecords) {
+            boolean remove = pendingSaleRecords.remove(persistenceSaleRecord);
+            if (remove) {
+                log.trace("except already persistence saleRecord {}", persistenceSaleRecord);
+            }
+        }
 
         try {
             saleRecordRepository.saveAll(pendingSaleRecords);
         }
         // 제약 조건 위배 - 게임 명, 서버 명, 거래 등록일, 사용자 ID 멀티 인덱스 중복 X 조건 위배 확률
+        // 이미 저장되어 있는 거래 내역을 등록하려고 할 때 제약 사항 위배 에러가 뜨게 됨
         catch (DataIntegrityViolationException exception) {
             log.error("some sale record already persist, tx rollback" , exception);
             throw new SaleRecordServiceException(F_SR02);
-        }
 
-        return "sale record upload success";
+        }
+        pendingSaleRecords.isEmpty();
+        return pendingSaleRecords.isEmpty() ?
+                "success, but 0 saleRecord uploaded because already persistence" :
+                "success," + persistenceSaleRecords.size() + " saleRecord";
     }
 
     // 엑셀 파일 내 첫 행이 형식에 맞게 배열되어 있는지 검증

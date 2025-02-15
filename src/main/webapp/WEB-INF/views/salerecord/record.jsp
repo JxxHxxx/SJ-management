@@ -107,7 +107,7 @@
             formData.append('file', file);
         }
 
-        fetch('/api/sale-records', {
+        fetch('/manage/api/sale-records', {
             method: 'POST',
             body: formData
         })
@@ -118,7 +118,7 @@
                 }
                 else {
                     alert("❌ upload fail" +
-                        "\nerror code : ' + data.responseCode" +
+                        "\nerror code : " + data.responseCode +
                         "\nmessage : " + data.body);
                 }
             })

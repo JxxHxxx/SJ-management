@@ -17,10 +17,11 @@ public class JxSheetUtils {
         double fractionalDay = numericValue - days;
         long totalNanoSeconds = (long) (fractionalDay * 86400 * 1_000_000_000L); // 하루(86400초) 기준 나노초 변환
 
-        // 초와 나노초 분리
+        // 초 분리
         long seconds = totalNanoSeconds / 1_000_000_000L;
+        // 나노 초는 객체와 DB 레코드 사이 datetime 자리 수 한계로 인한 오차 존재로 동등성 검증 실패 하게 됨
         int nanos = (int) (totalNanoSeconds % 1_000_000_000L);
         // 최종 변환
-        return excelEpoch.plusDays(days).plusSeconds(seconds).plusNanos(nanos);
+        return excelEpoch.plusDays(days).plusSeconds(seconds);
     }
 }

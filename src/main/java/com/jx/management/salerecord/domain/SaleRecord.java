@@ -79,4 +79,8 @@ public class SaleRecord {
                 this.userId.equals(saleRecord.getUserId());
 
     }
+
+    public void changeDelete(boolean deleted) {
+        this.deleted =deleted;
+    }
 }

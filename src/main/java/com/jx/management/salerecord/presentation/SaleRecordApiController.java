@@ -17,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.CREATED;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -44,6 +46,6 @@ public class SaleRecordApiController {
     public ResponseEntity<EndPointDto<String>> record(@RequestParam("file") MultipartFile file) throws IOException {
         log.info("request record()");
         String result = saleRecordService.record(file);
-        return ResponseEntity.ok(new EndPointDto<String>(ResponseCode.S_0001.name(), result));
+        return ResponseEntity.status(CREATED.value()).body(new EndPointDto<>(ResponseCode.S_0001.name(), result));
     }
 }

@@ -28,4 +28,6 @@ public interface SaleRecordRepository extends JpaRepository<SaleRecord, Long> {
             "GROUP BY  DATE_FORMAT(TX_ENROLL_DATE_TIME,'%Y-%m') " +
             "ORDER BY DATE_FORMAT(TX_ENROLL_DATE_TIME,'%Y-%m') DESC ", nativeQuery = true)
     List<MonthlySaleRecordStatTransfer> getMonthlySaleRecordStatistics(String yearMonth);
+
+    List<SaleRecord> findByUserId(String userId);
 }
