@@ -1,0 +1,33 @@
+.btn-gr {
+    display: flex;
+    justify-content: space-between;
+}
+
+#upload-box {
+    border: 2px dashed #007bff;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#upload-box:hover {
+    color: gray
+}
+
+#fileInput {
+    display: none;
+}
+
+#upload-btn {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    padding: 5px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+.warn-msg {
+    padding: 10px;
+    color: red;
+    font-size: 13px;
+}

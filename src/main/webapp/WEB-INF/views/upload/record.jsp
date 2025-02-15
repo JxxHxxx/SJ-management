@@ -1,66 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jxx Util</title>
-    <style>
-        .top-container {
-            width: 500px;
-            margin : 0 auto;
-        }
-        .btn-gr {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        #upload-box {
-            border: 2px dashed #007bff;
-            padding: 10px;
-            cursor: pointer;
-        }
-
-        #upload-box:hover {
-            color: gray
-        }
-
-        #fileInput {
-            display: none;
-        }
-
-        #upload-btn {
-            margin-top: 10px;
-            margin-bottom: 5px;
-            padding: 5px 20px;
-            background: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        .warn-msg {
-            padding: 10px;
-            color: red;
-            font-size: 13px;
-        }
-    </style>
-</head>
-<body>
-
-<div class="top-container">
-    <h2>판매 내역 자료 업로드</h2>
-    <div class="btn-gr">
-        <div></div>
-        <button id="upload-btn">등록</button>
+    <div class="content">
+        <h2>판매 내역 자료 업로드</h2>
+        <div class="btn-gr">
+            <div></div>
+            <button id="upload-btn">등록</button>
+        </div>
+        <div id="upload-box" onclick="document.getElementById('fileInput').click();">
+            <span id="file-name">파일 첨부</span>
+        </div>
+        <input type="file" id="fileInput">
+        <span class="warn-msg" style="display: none;">첨부된 파일이 없습니다. 파일을 첨부해주세요</span>
     </div>
-    <div id="upload-box" onclick="document.getElementById('fileInput').click();">
-        <span id="file-name">파일 첨부</span>
-    </div>
-    <input type="file" id="fileInput">
-    <span class="warn-msg" style="display: none;">첨부된 파일이 없습니다. 파일을 첨부해주세요</span>
-</div>
-
 <script>
     const uploadBox = document.getElementById('upload-box');
     const uploadBtn = document.getElementById('upload-btn');
@@ -132,6 +84,3 @@
     }
 
 </script>
-
-</body>
-</html>

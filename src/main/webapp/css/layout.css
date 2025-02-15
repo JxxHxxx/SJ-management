@@ -1,0 +1,17 @@
+.mainContainer {
+    display: flex;
+}
+.contentContainer {
+    display: flex;
+    flex-direction: row; /* 양옆으로 배치 */
+    justify-content: space-between; /* 양옆 간격을 균등하게 배치 */
+    align-items: flex-start; /* 세로 정렬: 상단에 정렬 */
+    gap: 20px; /* 각 콘텐츠 간 간격 */
+}
+
+.content {
+    /*width: 48%; !* 각 콘텐츠의 너비를 설정 *!*/
+    width: 700px;
+    border: 1px dashed #ddd;
+    padding: 20px;
+}

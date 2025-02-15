@@ -1,14 +1,10 @@
 package com.jx.management.salerecord.presentation;
 
-import com.jx.management.common.endpoint.EndPointDto;
 import com.jx.management.salerecord.transfer.AnnualSaleRecordStatTransfer;
-import com.jx.management.salerecord.transfer.MonthlySaleRecordStatTransfer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ConcurrentModel;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,18 +22,18 @@ public class SaleRecordViewController {
 
     private final SaleRecordApiController apiController;
 
-    @GetMapping("/saleRecord/main.do")
+    @GetMapping("/saleRecord/statMain.do")
     public String main(Model model,
                        @RequestParam(value = "year", defaultValue = "0") Integer year,
                        @RequestParam(value = "mys", defaultValue = "6") Integer mys) {
         requestGetAnnualSaleRecordStatistics(model, year);
         requestGetMonthlySaleRecordStatistics(model, mys);
-        return "salerecord/main";
+        return "salerecord/statMain";
     }
 
     @GetMapping("/saleRecord/upload.do")
     public String uploadSaleRecord() {
-        return "salerecord/record";
+        return "upload/recordMain";
     }
 
     @GetMapping("/saleRecord/annualStat.do")
