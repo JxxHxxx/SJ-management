@@ -60,17 +60,16 @@
         noUploadFileMsg.style.display = 'none';
         unSupportedFormatMsg.style.display = 'none';
         unValidatedFileMsg.style.display = 'none';
-
         let files = fileInput.files;
-        // 파일 형식이 xlsx 가 아닐 때
-        if (!files[0].name.endsWith(".xlsx")) {
-            unSupportedFormatMsg.style.display = 'inline';
-            return;
-        }
-
         // 파일을 업로드하지 않았을 때
         if (files.length === 0) {
             noUploadFileMsg.style.display = 'inline';
+            return;
+        }
+
+        // 파일 형식이 xlsx 가 아닐 때
+        if (!files[0].name.endsWith(".xlsx")) {
+            unSupportedFormatMsg.style.display = 'inline';
             return;
         }
 
