@@ -19,5 +19,11 @@
     enrollSaleRecordListItem.addEventListener('click', function () {
         window.location.href = '/manage/saleRecord/upload.do'
     })
+
+    const gameAccountManageListItem = document.getElementById('gameAccountManageListItem');
+    gameAccountManageListItem.addEventListener('click', function () {
+        window.location.href = '/manage/gameAccount/gaMain.do'
+    })
+
 </script>
 

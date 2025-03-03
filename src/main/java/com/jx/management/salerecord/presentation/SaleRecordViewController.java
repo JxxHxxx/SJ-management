@@ -1,5 +1,7 @@
 package com.jx.management.salerecord.presentation;
 
+import com.jx.management.common.endpoint.EndPointDto;
+import com.jx.management.salerecord.transfer.AccountPerAmountResponse;
 import com.jx.management.salerecord.transfer.AnnualSaleRecordStatTransfer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +27,15 @@ public class SaleRecordViewController {
     @GetMapping("/saleRecord/statMain.do")
     public String main(Model model,
                        @RequestParam(value = "year", defaultValue = "0") Integer year,
-                       @RequestParam(value = "mys", defaultValue = "6") Integer mys) {
+                       @RequestParam(value = "mys", defaultValue = "6") Integer mys,
+                       @RequestParam(value = "userId", defaultValue = "admin") String userId,
+                       @RequestParam(value = "apaYear", defaultValue = "2025") Integer apaYear ) {
         requestGetAnnualSaleRecordStatistics(model, year);
         requestGetMonthlySaleRecordStatistics(model, mys);
+
+        List<AccountPerAmountResponse> accountPerAmounts = apiController.getAccountPerAmount(userId, apaYear).getBody().getBody();
+        model.addAttribute("accountPerAmounts", accountPerAmounts);
+
         return "salerecord/statMain";
     }
 

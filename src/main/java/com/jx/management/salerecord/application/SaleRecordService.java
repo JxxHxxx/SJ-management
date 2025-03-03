@@ -3,16 +3,16 @@ package com.jx.management.salerecord.application;
 import com.jx.management.common.application.JxSheetUtils;
 import com.jx.management.common.endpoint.ResponseCode;
 import com.jx.management.salerecord.domain.*;
-import com.jx.management.salerecord.transfer.AnnualSaleRecordStatTransfer;
-import com.jx.management.salerecord.transfer.MonthlySaleRecordStatTransfer;
+import com.jx.management.salerecord.transfer.*;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.EncryptedDocumentException;
+import org.apache.commons.collections4.KeyValue;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -200,5 +201,80 @@ public class SaleRecordService {
         }
 
         return results;
+    }
+    /** **/
+    public List<AccountPerAmountResponse> getAccountPerAmount(String userId, Integer year) {
+        List<AnnualMonthlySaleRecordStatTransfer> annualMonthlySaleRecords = saleRecordRepository.getAnnualMonthlySaleRecordStatistics(year);
+        // 특정년도에 매출이 존재하는 게임이름 집합
+        Set<String> gameNameWithHavingSalesInAYear = new HashSet<>();
+        for (AnnualMonthlySaleRecordStatTransfer annualMonthlySaleRecord : annualMonthlySaleRecords) {
+            gameNameWithHavingSalesInAYear.add(annualMonthlySaleRecord.getGameName());
+        }
+
+        List<YearMonth> months = new ArrayList<>();
+        for (int month = 1; month <= 12; month++) {
+            months.add(YearMonth.of(year, month));
+        }
+
+        List<GameAccount> gameAccounts = gameAccountRepository.findByUserId(userId);
+        // key format -> gameName;yearMonth e.g) 프라시아전기;2024-01
+        Map<String, Integer> gameAccountTimeSeries = new HashMap<>();
+
+        for (GameAccount gameAccount : gameAccounts) {
+            LocalDate firstSaleDate = gameAccount.getFirstSaleDate();
+            if (Objects.isNull(firstSaleDate)) { // 첫 판매일이 없을(null) 경우, 아래 분기를 실행하지 않고 넘어간다.
+                log.info("first sale date is null");
+                continue;
+            }
+
+            for (YearMonth month : months) {
+                YearMonth firstSaleYearMonth = YearMonth.from(firstSaleDate);
+                if (firstSaleYearMonth.isBefore(month) || firstSaleYearMonth.equals(month)) {
+                    String tmpMapKey = gameAccount.getGameName() + ";" + month;
+                    Integer accountNumber = gameAccountTimeSeries.get(tmpMapKey);
+
+                    if (Objects.isNull(accountNumber)) {
+                        gameAccountTimeSeries.put(tmpMapKey,  1);
+                    }
+                    else {
+                        gameAccountTimeSeries.put(tmpMapKey,  accountNumber + 1);
+                    }
+                }
+            }
+        }
+
+        List<AccountPerAmountResponse> responses = new ArrayList<>();
+
+        for (String gameName : gameNameWithHavingSalesInAYear) {
+            AccountPerAmountResponse accountPerAmountResponse = new AccountPerAmountResponse(gameName);
+            List<AccountPerMonthlyAmount> accountPerMonthlyAmounts = new ArrayList<>();
+
+            for (AnnualMonthlySaleRecordStatTransfer sr : annualMonthlySaleRecords) {
+                if (Objects.equals(gameName, sr.getGameName())) {
+                    Integer accountNumber = gameAccountTimeSeries.get(sr.getGameName() + ";" + sr.getYearMonth());
+                    if (!Objects.isNull(accountNumber)) {
+                        int accountPerAmount = sr.getAmountSum() / accountNumber;
+                        AccountPerMonthlyAmount accountPerMonthlyAmount = new AccountPerMonthlyAmount(sr.getYearMonth(), accountNumber, accountPerAmount);
+                        accountPerMonthlyAmounts.add(accountPerMonthlyAmount);
+                    }
+                }
+            }
+            // Default Data -> 계정은 있지만 매출이 없는 달은 제대로 반영하지 못함, 이 문제를 해결하는 가장 효율적인 방법은
+            // 계정 당 매출 배치를 만들어 DB에 저장해두는건데 토이 프로젝트라서 생략
+            for (YearMonth month : months) {
+                boolean notExistYearMonthlyAmount = !accountPerMonthlyAmounts.stream()
+                        .anyMatch(item -> Objects.equals(item.getYearMonth(), month.toString()));
+
+                if (notExistYearMonthlyAmount) {
+                    AccountPerMonthlyAmount accountPerMonthlyAmount = new AccountPerMonthlyAmount(month.toString(), 0, 0);
+                    accountPerMonthlyAmounts.add(accountPerMonthlyAmount);
+                }
+            }
+            accountPerMonthlyAmounts.sort(Comparator.comparing(AccountPerMonthlyAmount::getYearMonth));
+            accountPerAmountResponse.setAccountPerMonthlyAmounts(accountPerMonthlyAmounts);
+            responses.add(accountPerAmountResponse);
+        }
+        return responses;
+        
     }
 }

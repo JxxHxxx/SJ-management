@@ -3,14 +3,20 @@ package com.jx.management.salerecord.application;
 import com.jx.management.salerecord.domain.SaleRecord;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
 
 class SaleRecordServiceTest {
+
+    private static final Logger log = LoggerFactory.getLogger(SaleRecordServiceTest.class);
 
     @Test
     void test1() {
@@ -62,6 +68,11 @@ class SaleRecordServiceTest {
 
         assertThat(saleRecord2.equals(saleRecord1)).isTrue();
         assertThat(saleRecords.remove(saleRecord2)).isTrue();
+    }
 
+    @Test
+    void yearMonthTest() {
+        YearMonth yearMonth = YearMonth.of(2024, 1);
+        log.info("yearMonth.toString() {}", yearMonth.toString());
     }
 }

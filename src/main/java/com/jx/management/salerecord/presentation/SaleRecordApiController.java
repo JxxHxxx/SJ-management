@@ -3,6 +3,7 @@ package com.jx.management.salerecord.presentation;
 import com.jx.management.common.endpoint.EndPointDto;
 import com.jx.management.common.endpoint.ResponseCode;
 import com.jx.management.salerecord.application.SaleRecordService;
+import com.jx.management.salerecord.transfer.AccountPerAmountResponse;
 import com.jx.management.salerecord.transfer.AnnualSaleRecordStatTransfer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,5 +48,12 @@ public class SaleRecordApiController {
         log.info("request record()");
         Integer saleRecordCount = saleRecordService.record(file);
         return ResponseEntity.status(CREATED.value()).body(new EndPointDto<>(ResponseCode.S_0001.name(), saleRecordCount));
+    }
+
+    @GetMapping("/api/sale-records/account-per-amount")
+    public ResponseEntity<EndPointDto<List<AccountPerAmountResponse>>> getAccountPerAmount(@RequestParam(value = "userId", defaultValue = "admin") String userId,
+                                                           @RequestParam(value = "apaYear", defaultValue = "2025") Integer apaYear) {
+        List<AccountPerAmountResponse> response = saleRecordService.getAccountPerAmount(userId, apaYear);
+        return ResponseEntity.ok(new EndPointDto(ResponseCode.S_0001.name(),  response));
     }
 }

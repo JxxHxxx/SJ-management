@@ -1,5 +1,6 @@
 package com.jx.management.salerecord.domain;
 
+import com.jx.management.salerecord.transfer.AnnualMonthlySaleRecordStatTransfer;
 import com.jx.management.salerecord.transfer.AnnualSaleRecordStatTransfer;
 import com.jx.management.salerecord.transfer.MonthlySaleRecordStatTransfer;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,6 +29,15 @@ public interface SaleRecordRepository extends JpaRepository<SaleRecord, Long> {
             "GROUP BY  DATE_FORMAT(TX_ENROLL_DATE_TIME,'%Y-%m') " +
             "ORDER BY DATE_FORMAT(TX_ENROLL_DATE_TIME,'%Y-%m') DESC ", nativeQuery = true)
     List<MonthlySaleRecordStatTransfer> getMonthlySaleRecordStatistics(String yearMonth);
+
+    @Query(value = "SELECT GAME_NAME AS gameName, " +
+            "SUM(TX_AMOUNT) AS amountSum, " +
+            "DATE_FORMAT(TX_ENROLL_DATE_TIME,'%Y-%m') AS yearMonth " +
+            "FROM SALERECORD SR " +
+            "WHERE DATE_FORMAT(TX_ENROLL_DATE_TIME, '%Y') = :year " +
+            "GROUP BY GAME_NAME, DATE_FORMAT(TX_ENROLL_DATE_TIME,'%Y-%m') " +
+            "ORDER BY GAME_NAME ", nativeQuery = true)
+    List<AnnualMonthlySaleRecordStatTransfer> getAnnualMonthlySaleRecordStatistics(Integer year);
 
     List<SaleRecord> findByUserId(String userId);
 }
