@@ -1,6 +1,10 @@
 <%@ page import="com.jx.management.salerecord.transfer.AccountPerAmountResponse" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.jx.management.salerecord.transfer.AccountPerMonthlyAmount" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Collections" %>
+<%@ page import="java.util.SortedMap" %>
+<%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -23,15 +27,23 @@
         <div>
             <div class="contentContainer">
                 <div class="content">
-                    <jsp:include page="monthlyStat.jsp"/>
-                </div>
-                <div class="content">
-                    <jsp:include page="annualStat.jsp"/>
-                </div>
-            </div>
-            <div class="contentContainer">
-                <div class="content">
-                    <h2>계정 당 수익</h2>
+                    <h2>게임 계정 당 수익</h2>
+                    <form action="/manage/saleRecord/statMain.do" method="get">
+                        <input type="hidden" name="mys" value="${param.mys}">
+                        <%
+                            int currentYear = java.time.Year.now().getValue();
+                            List<Integer> years = new ArrayList<>();
+                            for (int i = 2021; i <= currentYear; i++) {
+                                years.add(i);
+                            }
+                            Collections.reverse(years);
+                        %>
+                        <select name="apaYear" onchange="this.form.submit()">
+                            <c:forEach var="year" items="<%=years%>">
+                                <option value="${year}" ${param.apaYear == year ? 'selected' : ''}>${year}</option>
+                            </c:forEach>
+                        </select>
+                    </form>
                     <canvas id="salesChart"></canvas>
                     <%
                         List<AccountPerAmountResponse> accountPerAmounts = (List<AccountPerAmountResponse>) request.getAttribute("accountPerAmounts");
@@ -39,7 +51,6 @@
 
                     <script>
                         var ctx = document.getElementById('salesChart').getContext('2d');
-
                         // colors 배열 (게임별 색상 지정)
                         var colors = [
                             { border: "rgba(75, 192, 192, 1)", background: "rgba(75, 192, 192, 0.2)" },
@@ -95,6 +106,46 @@
                         });
                     </script>
                 </div>
+                <div class="content">
+                    <h2>월 별 수익</h2>
+                    <form action="/manage/saleRecord/statMain.do" method="get">
+                        <input type="hidden" name="apaYear" value="${param.apaYear}">
+                        <select name="mys" onchange="this.form.submit()">
+                            <option value="18" ${param.mys == 18 ? 'selected' : ''}>18</option>
+                            <option value="12" ${param.mys == 12 ? 'selected' : ''}>12</option>
+                            <option value="6" ${param.mys == 6 ? 'selected' : ''}>6</option>
+                        </select>
+                    </form>
+                    <canvas id="monthlySaleChart"></canvas>
+                    <%
+                        SortedMap<String, Integer> monthlySaleRecordStat = (SortedMap<String, Integer>) request.getAttribute("monthlySaleRecordStat");
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        String monthlySaleRecordStatKeySet = objectMapper.writeValueAsString(monthlySaleRecordStat.keySet());
+                    %>
+                    <script>
+                        var ctx2 = document.getElementById('monthlySaleChart').getContext('2d');
+
+                        const monthlySaleChart = new Chart(ctx2, {
+                            type: 'bar',
+                            data: {
+                                labels: <%=monthlySaleRecordStatKeySet%>,
+                                datasets: [{
+                                    label : '월 별 매출',
+                                    data : <%=monthlySaleRecordStat.values()%>
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: { position: 'top' }
+                                }
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+            <div class="contentContainer">
+
             </div>
         </div>
     </div>

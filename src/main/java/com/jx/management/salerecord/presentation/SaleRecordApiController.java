@@ -37,7 +37,7 @@ public class SaleRecordApiController {
 
     @GetMapping("/api/sale-records/monthly")
     public ResponseEntity<EndPointDto<SortedMap<String, Integer>>> getMonthlySaleRecordStatistics(
-            @RequestParam(value = "mys",  defaultValue = "6") Integer mys) {
+            @RequestParam(value = "mys",  defaultValue = "12") Integer mys) {
         log.info("request getMonthlySaleRecordStatistics()");
         SortedMap<String, Integer> result = saleRecordService.getMonthlySaleRecordStatistics(mys);
         return ResponseEntity.ok(new EndPointDto<>(ResponseCode.S_0001.name(), result));

@@ -136,8 +136,8 @@ public class SaleRecordService {
             throw new SaleRecordServiceException(F_SR02);
 
         }
-        pendingSaleRecords.isEmpty();
-        return pendingSaleRecords.isEmpty() ? 0 : persistenceSaleRecords.size() ;
+
+        return pendingSaleRecords.isEmpty() ? 0 : pendingSaleRecords.size();
     }
 
     // 엑셀 파일 내 첫 행이 형식에 맞게 배열되어 있는지 검증
@@ -183,7 +183,9 @@ public class SaleRecordService {
             throw new SaleRecordServiceException(F_SR11);
         }
 
-        SortedMap<String, Integer> results = new TreeMap(Collections.reverseOrder());
+//        SortedMap<String, Integer> results = new TreeMap(Collections.reverseOrder());
+        // 역순 정렬 취소
+        SortedMap<String, Integer> results = new TreeMap();
         for (int my = 0; my < mys; my++) {
             results.put(LocalDate.now()
                     .minusMonths(my)

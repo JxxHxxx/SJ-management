@@ -27,7 +27,7 @@ public class SaleRecordViewController {
     @GetMapping("/saleRecord/statMain.do")
     public String main(Model model,
                        @RequestParam(value = "year", defaultValue = "0") Integer year,
-                       @RequestParam(value = "mys", defaultValue = "6") Integer mys,
+                       @RequestParam(value = "mys", defaultValue = "12") Integer mys,
                        @RequestParam(value = "userId", defaultValue = "admin") String userId,
                        @RequestParam(value = "apaYear", defaultValue = "2025") Integer apaYear ) {
         requestGetAnnualSaleRecordStatistics(model, year);
@@ -48,12 +48,6 @@ public class SaleRecordViewController {
     public String showSaleRecord(Model model, @RequestParam(value = "year", defaultValue = "0") Integer year) {
         requestGetAnnualSaleRecordStatistics(model, year);
         return "salerecord/annualStat";
-    }
-
-    @GetMapping("/saleRecord/monthlyStat.do")
-    public String showMonthlyStat(Model model, @RequestParam(value = "mys", defaultValue = "6") Integer mys) {
-        requestGetMonthlySaleRecordStatistics(model, mys);
-        return "salerecord/monthlyStat";
     }
 
     private void requestGetAnnualSaleRecordStatistics(Model model, Integer year) {
