@@ -7,8 +7,19 @@
             <div></div>
             <button id="upload-btn">등록</button>
         </div>
-        <div id="upload-box" onclick="document.getElementById('fileInput').click();">
-            <span id="file-name">파일 첨부</span>
+        <div id="upload-box">
+            <div id="file-upload-div"
+                 style="cursor: pointer"
+                 onclick="document.getElementById('fileInput').click();">
+                <span id="file-name">파일 첨부</span>
+            </div>
+            <div>
+                <i id="initUploadFileBtn"
+                   class="fa-solid fa-xmark xbtn"
+                   style="display: none;"
+                   onclick="initUploadFile()"
+                ></i>
+            </div>
         </div>
         <input type="file" id="fileInput">
         <span class="noUploadFileMsg" style="display: none;">첨부된 파일이 없습니다. 파일을 첨부해주세요</span>
@@ -16,13 +27,20 @@
         <span class="unValidatedFileMsg" style="display: none;">유효하지 않은 파일입니다. 판매 내역 파일 내부를 수정하지 마세요</span>
     </div>
 <script>
-    const uploadBox = document.getElementById('upload-box');
+    const fileUploadDiv = document.getElementById('file-upload-div');
     const uploadBtn = document.getElementById('upload-btn');
+    const initUploadFileIcon = document.getElementById('initUploadFileBtn')
     const fileInput = document.getElementById('fileInput');
     const fileNameDisplay = document.getElementById('file-name');
     const noUploadFileMsg = document.querySelector('.noUploadFileMsg');
     const unSupportedFormatMsg = document.querySelector('.unSupportedFormatMsg');
     const unValidatedFileMsg = document.querySelector('.unValidatedFileMsg');
+
+    function initUploadFile() {
+        fileInput.value = '';
+        fileNameDisplay.textContent = '파일 첨부';
+        initUploadFileIcon.style.display = 'none'
+    }
 
     fileInput.addEventListener('change', function (event) {
         let files = event.target.files;
@@ -30,26 +48,28 @@
             noUploadFileMsg.style.display = 'none';
             unSupportedFormatMsg.style.display = 'none';
             unValidatedFileMsg.style.display = 'none';
+            initUploadFileIcon.style.display = 'inline'
         }
         displayFileNames(files);
     });
 
-    uploadBox.addEventListener('dragover', function (event) {
+    fileUploadDiv.addEventListener('dragover', function (event) {
         event.preventDefault(); // 기본 동작(다운로드 방지)
-        uploadBox.style.borderColor = 'red'; // 드래그 중 스타일 변경
+        fileUploadDiv.style.borderColor = 'red'; // 드래그 중 스타일 변경
     });
 
-    uploadBox.addEventListener('dragleave', function () {
-        uploadBox.style.borderColor = '#007bff'; // 드래그 해제 시 원래 색상으로
+    fileUploadDiv.addEventListener('dragleave', function () {
+        fileUploadDiv.style.borderColor = '#007bff'; // 드래그 해제 시 원래 색상으로
     });
 
-    uploadBox.addEventListener('drop', function (event) {
+    fileUploadDiv.addEventListener('drop', function (event) {
         noUploadFileMsg.style.display = 'none';
         unSupportedFormatMsg.style.display = 'none';
         unValidatedFileMsg.style.display = 'none';
+        initUploadFileIcon.style.display = 'inline'
         event.preventDefault(); // 기본 동작 방지 (파일 다운로드 방지)
 
-        uploadBox.style.borderColor = '#007bff';
+        fileUploadDiv.style.borderColor = '#007bff';
 
         let files = event.dataTransfer.files;
         fileInput.files = files; // input 요소에 파일 등록

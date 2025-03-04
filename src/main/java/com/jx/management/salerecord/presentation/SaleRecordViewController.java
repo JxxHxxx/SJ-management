@@ -27,7 +27,7 @@ public class SaleRecordViewController {
     @GetMapping("/saleRecord/statMain.do")
     public String main(Model model,
                        @RequestParam(value = "year", defaultValue = "0") Integer year,
-                       @RequestParam(value = "mys", defaultValue = "12") Integer mys,
+                       @RequestParam(value = "mys", defaultValue = "18") Integer mys,
                        @RequestParam(value = "userId", defaultValue = "admin") String userId,
                        @RequestParam(value = "apaYear", defaultValue = "2025") Integer apaYear ) {
         requestGetAnnualSaleRecordStatistics(model, year);

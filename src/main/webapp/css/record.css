@@ -6,10 +6,11 @@
 #upload-box {
     border: 2px dashed #007bff;
     padding: 10px;
-    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
 }
 
-#upload-box:hover {
+#file-upload-div:hover, .xbtn:hover  {
     color: gray
 }
 

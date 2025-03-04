@@ -53,7 +53,6 @@
 
                 </div>
                 <div class="content">
-                    <p>C2</p>
                 </div>
             </div>
         </div>

@@ -27,7 +27,7 @@
         <div>
             <div class="contentContainer">
                 <div class="content">
-                    <h2>게임 계정 당 수익</h2>
+                    <h2>게임 계정 당 매출</h2>
                     <form action="/manage/saleRecord/statMain.do" method="get">
                         <input type="hidden" name="mys" value="${param.mys}">
                         <%
@@ -107,7 +107,7 @@
                     </script>
                 </div>
                 <div class="content">
-                    <h2>월 별 수익</h2>
+                    <h2>월 간 매출</h2>
                     <form action="/manage/saleRecord/statMain.do" method="get">
                         <input type="hidden" name="apaYear" value="${param.apaYear}">
                         <select name="mys" onchange="this.form.submit()">
@@ -130,7 +130,7 @@
                             data: {
                                 labels: <%=monthlySaleRecordStatKeySet%>,
                                 datasets: [{
-                                    label : '월 별 매출',
+                                    label : '매출(월)',
                                     data : <%=monthlySaleRecordStat.values()%>
                                 }]
                             },

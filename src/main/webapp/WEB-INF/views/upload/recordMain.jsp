@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/layout.css"/>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/record.css"/>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/left.css">
+    <script src="https://kit.fontawesome.com/7f69257d22.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <div class="mainContainer">
